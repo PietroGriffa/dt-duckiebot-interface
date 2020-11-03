@@ -32,12 +32,12 @@ class WheelEncoderNode(DTROS):
         )
         # get parameters
         self._name = rospy.get_param('~name')
-        self._gpio_pin = rospy.get_param('~gpio')
+        self._gpio_pins = [rospy.get_param('~gpio1'), rospy.get_param('~gpio2')]
         self._resolution = rospy.get_param('~resolution')
         self._tick_no = 1
 
         # setup the driver
-        self._driver = WheelEncoderDriver(self._gpio_pin, self._encoder_tick_cb)
+        self._driver = WheelEncoderDriver(self._gpio_pins, self._encoder_tick_cb)
 
         # publisher for wheel encoder ticks
         self._tick_pub = rospy.Publisher(

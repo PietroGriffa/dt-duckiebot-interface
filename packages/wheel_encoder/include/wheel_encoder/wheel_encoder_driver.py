@@ -26,23 +26,33 @@ class WheelEncoderDriver:
     """
 
     def __init__(self, gpio_pin, callback):
-        # valid gpio_pin
-        if not 1 <= gpio_pin <= 40:
-            raise ValueError('The pin number must be within the range [1, 40].')
+
         # validate callback
         if not callable(callback):
             raise ValueError('The callback object must be a callable object')
         # configure GPIO pin
-        self._gpio_pin = gpio_pin
+        self._gpio_pin = gpio_pin[0]
+        self._gpio_pin2 = gpio_pin[1]
         GPIO.setmode(GPIO.BCM)
-        GPIO.setup(gpio_pin, GPIO.IN)
-        GPIO.add_event_detect(gpio_pin, GPIO.RISING, callback=self._cb)
+        for pin in gpio_pin:
+            # valid gpio_pin
+            if not 1 <= pin <= 40:
+                raise ValueError('The pin number must be within the range [1, 40].')
+            GPIO.setup(pin, GPIO.IN)
+        GPIO.add_event_detect(gpio_pin[0], GPIO.RISING, callback=self._cb)
         # ---
         self._callback = callback
         self._ticks = 0
 
     def _cb(self, _):
         self._ticks += 1
+        second_signal = GPIO.input(self._gpio_pin2)
+        if second_signal is GPIO.LOW:
+            print('One direction')
+        elif second_signal is GPIO.HIGH:
+            print('Other direction')
+        else:
+            print('None of the above')
         self._callback(self._ticks)
 
     def shutdown(self):

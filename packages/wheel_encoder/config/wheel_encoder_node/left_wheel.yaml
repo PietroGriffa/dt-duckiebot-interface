@@ -1,2 +1,3 @@
-gpio: 18
+gpio1: 18
+gpio2: 23
 resolution: 135
